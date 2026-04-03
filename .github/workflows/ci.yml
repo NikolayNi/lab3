@@ -1,20 +1,22 @@
-name: C/C++ CI
-
-on: [push, pull_request]
+on: push
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: g++ -std=c++20 -Wall -Wextra -Werror -Wpedantic proga/debugger/lab3$/*.cpp -o lab3
 
+  clang-format:
+    runs-on: ubuntu-latest
+    container: ghcr.io/cpp-linter/clang-tools:18
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Install g++
-      run: sudo apt-get update && sudo apt-get install -y g++
-    
-    - name: Compile program
-      run: g++ -Wall -Wextra -Werror -std=c++17 -o program lab3.cpp
-      continue-on-error: false
-    
-    - name: Run program
-      run: ./program
+    - run: clang-format --dry-run -Werror proga/debugger/lab3$/*.cpp
+
+  clang-tidy:
+    runs-on: ubuntu-latest
+    container: ghcr.io/cpp-linter/clang-tools:18
+    steps:
+    - uses: actions/checkout@v4
+    - run: clang-tidy proga/debugger/lab3$/*.cpp
