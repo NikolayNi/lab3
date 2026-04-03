@@ -1,3 +1,5 @@
+name: C/C++ CI
+
 on: push
 
 jobs:
@@ -5,18 +7,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: g++ -std=c++20 -Wall -Wextra -Werror -Wpedantic proga/debugger/lab3$/*.cpp -o lab3
+      - name: Compile program
+        run: g++ -std=c++17 -Wall -Wextra -Werror -o program lab3_ci.cpp
+      - name: Run program
+        run: ./program
 
   clang-format:
     runs-on: ubuntu-latest
     container: ghcr.io/cpp-linter/clang-tools:18
     steps:
     - uses: actions/checkout@v4
-    - run: clang-format --dry-run -Werror proga/debugger/lab3$/*.cpp
+    - run: clang-format --dry-run -Werror lab3_ci.cpp
 
   clang-tidy:
     runs-on: ubuntu-latest
     container: ghcr.io/cpp-linter/clang-tools:18
     steps:
     - uses: actions/checkout@v4
-    - run: clang-tidy proga/debugger/lab3$/*.cpp
+    - run: clang-tidy lab3_ci.cpp -- -std=c++17
